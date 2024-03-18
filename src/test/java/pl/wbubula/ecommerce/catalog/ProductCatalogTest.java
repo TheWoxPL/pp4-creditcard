@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ProductCatalogTest {
 
@@ -22,7 +22,7 @@ public class ProductCatalogTest {
     void itAllowsToAddProduct(){
         ProductCatalog catalog = new ProductCatalog();
 
-       catalog.addProduct("Lego set 8083", "Nice one", BigDecimal.valueOf(100));
+       catalog.addProduct("Lego set 8083", "Nice one", BigDecimal.valueOf(100), "image.png");
        List<Product> products = catalog.allProducts();
 
         assertThat(products)
@@ -32,7 +32,7 @@ public class ProductCatalogTest {
     @Test
     void itLoadsSingleProductById(){
         ProductCatalog catalog = new ProductCatalog();
-        String id = catalog.addProduct("Lego set 8083", "Nice one", BigDecimal.valueOf(100));
+        String id = catalog.addProduct("Lego set 8083", "Nice one", BigDecimal.valueOf(100), "image.png");
 
         Product loaded = catalog.getProductById(id);
         assertThat(id).isEqualTo(loaded.getId());
@@ -41,12 +41,31 @@ public class ProductCatalogTest {
     @Test
     void itAllowsChangePrice(){
         ProductCatalog catalog = new ProductCatalog();
-        String id = catalog.addProduct("Lego set 8083", "Nice one", BigDecimal.valueOf(100));
+        String id = catalog.addProduct("Lego set 8083", "Nice one", BigDecimal.valueOf(100), "image.png");
 
         catalog.changePrice(id, BigDecimal.valueOf(10.10));
         Product loaded = catalog.getProductById(id);
 
         assertThat(BigDecimal.valueOf(10.10)).isEqualTo(loaded.getPrice());
+    }
+
+    @Test
+    void itDenysAddWhenNoDescription(){
+        ProductCatalog catalog = new ProductCatalog();
+
+        assertThrows(LackOfDescription.class, () -> {
+            catalog.addProduct("Lego set 8083", null, BigDecimal.valueOf(100), "image.png");
+        });
+    }
+
+    @Test
+    void itDenysAddWhenNoImageSource(){
+        ProductCatalog catalog = new ProductCatalog();
+
+        assertThrows(LackOfImageSource.class, () -> {
+            catalog.addProduct("Lego set 8083", "Nice one", BigDecimal.valueOf(100), null);
+        });
+
     }
 
 }

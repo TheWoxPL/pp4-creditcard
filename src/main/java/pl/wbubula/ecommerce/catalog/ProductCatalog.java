@@ -18,7 +18,12 @@ public class ProductCatalog {
         return products;
     }
 
-    public String addProduct(String name, String description, BigDecimal price) {
+    public String addProduct(String name, String description, BigDecimal price, String imageSource) {
+        if(description==null)
+            throw new LackOfDescription();
+        else if(imageSource==null)
+            throw new LackOfImageSource();
+
         UUID id = UUID.randomUUID();
         Product newProduct = new Product(id, name, description, price);
 
@@ -26,6 +31,7 @@ public class ProductCatalog {
 
         return newProduct.getId();
     }
+
 
     public Product getProductById(String id) {
         return products.stream()
